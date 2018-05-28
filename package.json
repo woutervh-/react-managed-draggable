@@ -2,7 +2,8 @@
   "name": "react-managed-draggable",
   "version": "0.1.0",
   "description": "Draggable wrapper for React",
-  "main": "lib/index.js",
+  "main": "lib-es5/index.js",
+  "module": "lib-es6/index.js",
   "scripts": {
     "clean": "rimraf lib-browser lib-es5 lib-es6",
     "build": "npm run clean && npm run build:es6 && npm run build:es5 && npm run build:browser && npm run build:browser:min",

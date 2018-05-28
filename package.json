@@ -6,7 +6,7 @@
   "module": "lib-es6/index.js",
   "types": "lib-es6/index.d.js",
   "files": [
-    "lib-*"
+    "src", "lib-*"
   ],
   "scripts": {
     "clean": "rimraf lib-browser lib-es5 lib-es6",

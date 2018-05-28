@@ -50,7 +50,7 @@ export interface DragInformation {
     last: XY;
 }
 
-export interface DraggableProps {
+export interface DraggableProps extends Pick<React.AllHTMLAttributes<HTMLDivElement>, Exclude<keyof React.AllHTMLAttributes<HTMLDivElement>, 'threshold' | 'onDragStart' | 'onDragMove' | 'onDragEnd'>> {
     threshold?: number;
     onDragStart?: (event: MouseEvent | TouchEvent, dragPayload: DragInformation) => void;
     onDragMove?: (event: MouseEvent | TouchEvent, dragPayload: DragInformation) => void;

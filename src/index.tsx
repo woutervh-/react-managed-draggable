@@ -50,11 +50,12 @@ export interface DragInformation {
     last: XY;
 }
 
-export interface DraggableProps extends Pick<React.AllHTMLAttributes<HTMLDivElement>, Exclude<keyof React.AllHTMLAttributes<HTMLDivElement>, 'threshold' | 'onDragStart' | 'onDragMove' | 'onDragEnd'>> {
+export interface DraggableProps extends Pick<React.AllHTMLAttributes<HTMLDivElement>, Exclude<keyof React.AllHTMLAttributes<HTMLDivElement>, 'threshold' | 'onDragStart' | 'onDragMove' | 'onDragEnd' | 'onClick'>> {
     threshold?: number;
     onDragStart?: (event: MouseEvent | TouchEvent, dragPayload: DragInformation) => void;
     onDragMove?: (event: MouseEvent | TouchEvent, dragPayload: DragInformation) => void;
     onDragEnd?: (event: MouseEvent | TouchEvent | undefined, dragPayload: DragInformation) => void;
+    onClick?: (event: MouseEvent | TouchEvent) => void;
 }
 
 export class Draggable extends React.Component<DraggableProps, never> {
@@ -162,12 +163,16 @@ export class Draggable extends React.Component<DraggableProps, never> {
                 if (this.props.onDragEnd) {
                     this.props.onDragEnd(event, this.generateDragInformation(last));
                 }
+            } else {
+                if (this.props.onClick) {
+                    this.props.onClick(event);
+                }
             }
         }
     }
 
     render() {
-        const { children, threshold, onDragStart, onDragMove, onDragEnd, ...other } = this.props;
+        const { children, threshold, onDragStart, onDragMove, onDragEnd, onClick, ...other } = this.props;
         return <div ref={(ref) => this.element = ref} {...other}>
             {children}
         </div>;

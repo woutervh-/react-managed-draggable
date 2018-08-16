@@ -164,11 +164,13 @@ export class Draggable extends React.Component<DraggableProps, never> {
                     this.props.onDragEnd(event, this.generateDragInformation(last));
                 }
             } else if (this.props.onClick) {
-                const last = this.current;
-                if (!('touches' in event)) {
-                    this.current = getPosition(event);
+                if ('touches' in event || event.button === 0) {
+                    const last = this.current;
+                    if (!('touches' in event)) {
+                        this.current = getPosition(event);
+                    }
+                    this.props.onClick(event, this.generateDragInformation(last));
                 }
-                this.props.onClick(event, this.generateDragInformation(last));
             }
         }
     }

@@ -55,7 +55,7 @@ export interface DraggableProps extends Pick<React.AllHTMLAttributes<HTMLDivElem
     onDragStart?: (event: MouseEvent | TouchEvent, dragPayload: DragInformation) => void;
     onDragMove?: (event: MouseEvent | TouchEvent, dragPayload: DragInformation) => void;
     onDragEnd?: (event: MouseEvent | TouchEvent | undefined, dragPayload: DragInformation) => void;
-    onClick?: (event: MouseEvent | TouchEvent) => void;
+    onClick?: (event: MouseEvent | TouchEvent, dragPayload: DragInformation) => void;
 }
 
 export class Draggable extends React.Component<DraggableProps, never> {
@@ -163,10 +163,12 @@ export class Draggable extends React.Component<DraggableProps, never> {
                 if (this.props.onDragEnd) {
                     this.props.onDragEnd(event, this.generateDragInformation(last));
                 }
-            } else {
-                if (this.props.onClick) {
-                    this.props.onClick(event);
+            } else if (this.props.onClick) {
+                const last = this.current;
+                if (!('touches' in event)) {
+                    this.current = getPosition(event);
                 }
+                this.props.onClick(event, this.generateDragInformation(last));
             }
         }
     }

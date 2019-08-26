@@ -1,5 +1,2 @@
-# Libs
-lib-*/
-
-# Modules
 node_modules/
+lib/

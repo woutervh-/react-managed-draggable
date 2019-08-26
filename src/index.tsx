@@ -69,25 +69,6 @@ export class Draggable extends React.Component<DraggableProps, never> {
 
     private current: XY = { x: 0, y: 0 };
 
-    private handleMove = rafThrottle((event: MouseEvent | TouchEvent) => {
-        if (this.down) {
-            const last = this.current;
-            this.current = getPosition(event);
-            if (this.dragging) {
-                if (this.props.onDragMove) {
-                    this.props.onDragMove(event, this.generateDragInformation(last));
-                }
-            } else {
-                if (manhattanDistance(this.start, this.current) >= this.getThreshold()) {
-                    this.dragging = true;
-                    if (this.props.onDragStart) {
-                        this.props.onDragStart(event, this.generateDragInformation(last));
-                    }
-                }
-            }
-        }
-    });
-
     componentDidMount() {
         if (this.element !== null) {
             this.element.addEventListener('mousedown', this.handleDown);
@@ -145,6 +126,25 @@ export class Draggable extends React.Component<DraggableProps, never> {
             event.preventDefault();
         }
     }
+
+    private handleMove = rafThrottle((event: MouseEvent | TouchEvent) => {
+        if (this.down) {
+            const last = this.current;
+            this.current = getPosition(event);
+            if (this.dragging) {
+                if (this.props.onDragMove) {
+                    this.props.onDragMove(event, this.generateDragInformation(last));
+                }
+            } else {
+                if (manhattanDistance(this.start, this.current) >= this.getThreshold()) {
+                    this.dragging = true;
+                    if (this.props.onDragStart) {
+                        this.props.onDragStart(event, this.generateDragInformation(last));
+                    }
+                }
+            }
+        }
+    });
 
     private handleUp = (event: MouseEvent | TouchEvent) => {
         if (this.down) {

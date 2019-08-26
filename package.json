@@ -2,20 +2,20 @@
   "name": "react-managed-draggable",
   "version": "0.1.8",
   "description": "Draggable wrapper for React",
-  "main": "lib-es5/index.js",
-  "module": "lib-es6/index.js",
-  "types": "lib-es6/index.d.js",
+  "main": "lib/es5/index.js",
+  "module": "lib/es6/index.js",
+  "types": "lib/es6/index.d.js",
   "files": [
     "src",
-    "lib-*"
+    "lib"
   ],
   "scripts": {
-    "clean": "rimraf lib-browser lib-es5 lib-es6",
+    "clean": "rimraf lib/",
     "build": "npm run clean && npm run build:es6 && npm run build:es5 && npm run build:browser && npm run build:browser:min",
-    "build:browser": "cross-env ROLLUP_UGLIFY=false rollup --config --output.file lib-browser/bundle.js",
-    "build:browser:min": "cross-env ROLLUP_UGLIFY=true rollup --config --output.file lib-browser/bundle.min.js",
-    "build:es5": "tsc --target es5 --module commonjs --outDir lib-es5 --declarationDir lib-es5",
-    "build:es6": "tsc --target es6 --module es6 --outDir lib-es6 --declarationDir lib-es6",
+    "build:browser": "cross-env ROLLUP_UGLIFY=false rollup --config --output.file lib/browser/bundle.js",
+    "build:browser:min": "cross-env ROLLUP_UGLIFY=true rollup --config --output.file lib/browser/bundle.min.js",
+    "build:es5": "tsc --target es5 --module commonjs --outDir lib/es5/ --declarationDir lib/es5/",
+    "build:es6": "tsc --target es6 --module es6 --outDir lib/es6/ --declarationDir lib/es6/",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -41,6 +41,6 @@
     "rollup-plugin-commonjs": "^9.1.3",
     "rollup-plugin-node-resolve": "^3.3.0",
     "rollup-plugin-uglify": "^4.0.0",
-    "typescript": "^2.8.3"
+    "typescript": "^3.5.3"
   }
 }

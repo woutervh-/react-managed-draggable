@@ -75,8 +75,8 @@ export class ElementDraggable {
         this.options = options;
         if (passive) {
             this.dragging = true;
-            document.addEventListener('mousemove', this.handleMove);
-            document.addEventListener('touchmove', this.handleMove);
+            element.addEventListener('mousemove', this.handleMove);
+            element.addEventListener('touchmove', this.handleMove);
         } else {
             element.addEventListener('mousedown', this.handleDown);
             element.addEventListener('touchstart', this.handleDown);

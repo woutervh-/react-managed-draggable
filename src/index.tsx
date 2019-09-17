@@ -39,12 +39,12 @@ function manhattanDistance(p1: XY, p2: XY): number {
 export function getPosition(event: MouseEvent | TouchEvent): XY {
     if ('touches' in event) {
         if (event.touches.length >= 1) {
-            return { x: event.touches[0].pageX, y: event.touches[0].pageY };
+            return { x: event.touches[0].clientX, y: event.touches[0].clientY };
         } else {
             return { x: 0, y: 0 };
         }
     } else {
-        return { x: event.pageX, y: event.pageY };
+        return { x: event.clientX, y: event.clientY };
     }
 }
 

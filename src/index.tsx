@@ -65,21 +65,33 @@ export interface DragOptions {
 export class ElementDraggable {
     private element: HTMLElement;
     private options: DragOptions;
+    private immediate: boolean;
     private down: boolean = false;
     private dragging: boolean = false;
     private start: XY = { x: 0, y: 0 };
     private current: XY = { x: 0, y: 0 };
 
-    public constructor(element: HTMLElement, options: DragOptions) {
+    public constructor(element: HTMLElement, options: DragOptions, immediate?: boolean) {
         this.element = element;
         this.options = options;
-        element.addEventListener('mousedown', this.handleDown);
-        element.addEventListener('touchstart', this.handleDown);
+        this.immediate = !!immediate;
+        if (immediate) {
+            this.dragging = true;
+            document.addEventListener('mousemove', this.handleMove);
+            document.addEventListener('touchmove', this.handleMove);
+            document.addEventListener('mouseup', this.handleUp);
+            document.addEventListener('touchend', this.handleUp);
+        } else {
+            element.addEventListener('mousedown', this.handleDown);
+            element.addEventListener('touchstart', this.handleDown);
+        }
     }
 
     public destroy() {
-        this.element.removeEventListener('mousedown', this.handleDown);
-        this.element.removeEventListener('touchstart', this.handleDown);
+        if (!this.immediate) {
+            this.element.removeEventListener('mousedown', this.handleDown);
+            this.element.removeEventListener('touchstart', this.handleDown);
+        }
         if (this.down) {
             this.down = false;
             if (this.options.onDragEnd) {
@@ -120,7 +132,7 @@ export class ElementDraggable {
     }
 
     private handleMove = rafThrottle((event: MouseEvent | TouchEvent) => {
-        if (this.down) {
+        if (this.down || this.dragging) {
             const last = this.current;
             this.current = getPosition(event);
             if (this.dragging) {
@@ -139,7 +151,7 @@ export class ElementDraggable {
     });
 
     private handleUp = (event: MouseEvent | TouchEvent) => {
-        if (this.down) {
+        if (this.down || this.dragging) {
             this.down = false;
 
             document.body.classList.remove('react-managed-draggable-unselectable');
@@ -156,7 +168,7 @@ export class ElementDraggable {
                 if (this.options.onDragEnd) {
                     this.options.onDragEnd(event, this.generateDragInformation(last));
                 }
-            } else if (this.options.onClick) {
+            } else if (this.down && this.options.onClick) {
                 if ('touches' in event || event.button === 0) {
                     const last = this.current;
                     if (!('touches' in event)) {

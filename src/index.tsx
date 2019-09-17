@@ -54,7 +54,7 @@ export interface DragInformation {
     last: XY;
 }
 
-export interface DraggableProps extends Pick<React.AllHTMLAttributes<HTMLDivElement>, Exclude<keyof React.AllHTMLAttributes<HTMLDivElement>, 'threshold' | 'onDragStart' | 'onDragMove' | 'onDragEnd' | 'onClick'>> {
+export interface DragOptions {
     threshold?: number;
     onDragStart?: (event: MouseEvent | TouchEvent, dragPayload: DragInformation) => void;
     onDragMove?: (event: MouseEvent | TouchEvent, dragPayload: DragInformation) => void;
@@ -62,51 +62,38 @@ export interface DraggableProps extends Pick<React.AllHTMLAttributes<HTMLDivElem
     onClick?: (event: MouseEvent | TouchEvent, dragPayload: DragInformation) => void;
 }
 
-export class Draggable extends React.Component<DraggableProps, never> {
-    private element: HTMLDivElement | null = null;
-
+export class ElementDraggable {
+    private element: HTMLElement;
+    private options: DragOptions;
     private down: boolean = false;
-
     private dragging: boolean = false;
-
     private start: XY = { x: 0, y: 0 };
-
     private current: XY = { x: 0, y: 0 };
 
-    componentDidMount() {
-        if (this.element !== null) {
-            this.element.addEventListener('mousedown', this.handleDown);
-            this.element.addEventListener('touchstart', this.handleDown);
-        }
+    public constructor(element: HTMLElement, options: DragOptions) {
+        this.element = element;
+        this.options = options;
+        element.addEventListener('mousedown', this.handleDown);
+        element.addEventListener('touchstart', this.handleDown);
     }
 
-    componentWillUnmount() {
-        if (this.element !== null) {
-            this.element.removeEventListener('mousedown', this.handleDown);
-            this.element.removeEventListener('touchstart', this.handleDown);
-            if (this.down) {
-                this.down = false;
-                if (this.props.onDragEnd) {
-                    this.props.onDragEnd(undefined, this.generateDragInformation(this.current));
-                }
-                document.removeEventListener('mousemove', this.handleMove);
-                document.removeEventListener('touchmove', this.handleMove);
-                document.removeEventListener('mouseup', this.handleUp);
-                document.removeEventListener('touchend', this.handleUp);
+    public destroy() {
+        this.element.removeEventListener('mousedown', this.handleDown);
+        this.element.removeEventListener('touchstart', this.handleDown);
+        if (this.down) {
+            this.down = false;
+            if (this.options.onDragEnd) {
+                this.options.onDragEnd(undefined, this.generateDragInformation(this.current));
             }
+            document.removeEventListener('mousemove', this.handleMove);
+            document.removeEventListener('touchmove', this.handleMove);
+            document.removeEventListener('mouseup', this.handleUp);
+            document.removeEventListener('touchend', this.handleUp);
         }
     }
 
     private getThreshold() {
-        return this.props.threshold === undefined ? 0 : this.props.threshold;
-    }
-
-    private generateDragInformation(last: XY): DragInformation {
-        return {
-            current: this.current,
-            start: this.start,
-            last
-        };
+        return this.options.threshold === undefined ? 0 : this.options.threshold;
     }
 
     private handleDown = (event: MouseEvent | TouchEvent) => {
@@ -122,8 +109,8 @@ export class Draggable extends React.Component<DraggableProps, never> {
 
             if (this.getThreshold() <= 0) {
                 this.dragging = true;
-                if (this.props.onDragStart) {
-                    this.props.onDragStart(event, this.generateDragInformation(this.current));
+                if (this.options.onDragStart) {
+                    this.options.onDragStart(event, this.generateDragInformation(this.current));
                 }
             }
 
@@ -137,14 +124,14 @@ export class Draggable extends React.Component<DraggableProps, never> {
             const last = this.current;
             this.current = getPosition(event);
             if (this.dragging) {
-                if (this.props.onDragMove) {
-                    this.props.onDragMove(event, this.generateDragInformation(last));
+                if (this.options.onDragMove) {
+                    this.options.onDragMove(event, this.generateDragInformation(last));
                 }
             } else {
                 if (manhattanDistance(this.start, this.current) >= this.getThreshold()) {
                     this.dragging = true;
-                    if (this.props.onDragStart) {
-                        this.props.onDragStart(event, this.generateDragInformation(last));
+                    if (this.options.onDragStart) {
+                        this.options.onDragStart(event, this.generateDragInformation(last));
                     }
                 }
             }
@@ -166,22 +153,56 @@ export class Draggable extends React.Component<DraggableProps, never> {
                 const last = this.current;
                 // If touch is released, there are no event coordinates
                 // this.current = getPosition(event);
-                if (this.props.onDragEnd) {
-                    this.props.onDragEnd(event, this.generateDragInformation(last));
+                if (this.options.onDragEnd) {
+                    this.options.onDragEnd(event, this.generateDragInformation(last));
                 }
-            } else if (this.props.onClick) {
+            } else if (this.options.onClick) {
                 if ('touches' in event || event.button === 0) {
                     const last = this.current;
                     if (!('touches' in event)) {
                         this.current = getPosition(event);
                     }
-                    this.props.onClick(event, this.generateDragInformation(last));
+                    this.options.onClick(event, this.generateDragInformation(last));
                 }
             }
         }
     }
 
-    render() {
+    private generateDragInformation(last: XY): DragInformation {
+        return {
+            current: this.current,
+            start: this.start,
+            last
+        };
+    }
+}
+
+export interface Props extends Pick<React.AllHTMLAttributes<HTMLDivElement>, Exclude<keyof React.AllHTMLAttributes<HTMLDivElement>, keyof DragOptions>>, DragOptions { }
+
+export class Draggable extends React.Component<Props, never> {
+    private element: HTMLDivElement | null = null;
+    private draggable: ElementDraggable | null = null;
+
+    public componentDidMount() {
+        if (this.element !== null) {
+            this.draggable = new ElementDraggable(this.element, {
+                threshold: this.props.threshold,
+                onDragStart: this.props.onDragStart,
+                onDragMove: this.props.onDragMove,
+                onDragEnd: this.props.onDragEnd,
+                onClick: this.props.onClick
+            });
+        }
+    }
+
+    public componentWillUnmount() {
+        if (this.draggable !== null) {
+            this.draggable.destroy();
+            this.draggable = null;
+        }
+    }
+
+    public render() {
         const { children, threshold, onDragStart, onDragMove, onDragEnd, onClick, ...other } = this.props;
         return <div ref={(ref) => this.element = ref} {...other}>
             {children}

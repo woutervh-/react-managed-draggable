@@ -36,7 +36,7 @@ function manhattanDistance(p1: XY, p2: XY): number {
     return Math.abs(p1.x - p2.x) + Math.abs(p1.y - p2.y);
 }
 
-function getPosition(event: MouseEvent | TouchEvent): XY {
+export function getPosition(event: MouseEvent | TouchEvent): XY {
     if ('touches' in event) {
         if (event.touches.length >= 1) {
             return { x: event.touches[0].pageX, y: event.touches[0].pageY };

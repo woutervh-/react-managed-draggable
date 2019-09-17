@@ -1,5 +1,9 @@
 import * as React from 'react';
 
+const styleElement = document.createElement('style');
+styleElement.innerHTML = '.react-managed-draggable-unselectable { user-select: none; }';
+document.body.appendChild(styleElement);
+
 export interface XY {
     x: number;
     y: number;
@@ -113,6 +117,7 @@ export class Draggable extends React.Component<DraggableProps, never> {
             document.addEventListener('touchmove', this.handleMove);
             document.addEventListener('mouseup', this.handleUp);
             document.addEventListener('touchend', this.handleUp);
+            document.body.classList.add('react-managed-draggable-unselectable');
             this.current = this.start = getPosition(event);
 
             if (this.getThreshold() <= 0) {
@@ -150,6 +155,7 @@ export class Draggable extends React.Component<DraggableProps, never> {
         if (this.down) {
             this.down = false;
 
+            document.body.classList.remove('react-managed-draggable-unselectable');
             document.removeEventListener('mousemove', this.handleMove);
             document.removeEventListener('touchmove', this.handleMove);
             document.removeEventListener('mouseup', this.handleUp);

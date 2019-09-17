@@ -54,7 +54,7 @@ class App extends React.PureComponent {
   }
 
   handleDragStart = (event, dragInformation) => {
-    document.body.classList.add("unselectable");
+    // No-op.
   };
 
   handleDragMove = (event, dragInformation) => {
@@ -65,7 +65,6 @@ class App extends React.PureComponent {
   };
 
   handleDragEnd = (event, dragInformation) => {
-    document.body.classList.remove("unselectable");
     this.setState({ deltaX: 0, deltaY: 0 });
   };
 }

@@ -70,17 +70,11 @@ export class ElementDraggable {
     private start: XY = { x: 0, y: 0 };
     private current: XY = { x: 0, y: 0 };
 
-    public constructor(element: HTMLElement, options: DragOptions, passive?: boolean) {
+    public constructor(element: HTMLElement, options: DragOptions) {
         this.element = element;
         this.options = options;
-        if (passive) {
-            this.dragging = true;
-            element.addEventListener('mousemove', this.handleMove);
-            element.addEventListener('touchmove', this.handleMove);
-        } else {
-            element.addEventListener('mousedown', this.handleDown);
-            element.addEventListener('touchstart', this.handleDown);
-        }
+        element.addEventListener('mousedown', this.handleDown);
+        element.addEventListener('touchstart', this.handleDown);
     }
 
     public destroy() {
@@ -126,7 +120,7 @@ export class ElementDraggable {
     }
 
     private handleMove = rafThrottle((event: MouseEvent | TouchEvent) => {
-        if (this.down || this.dragging) {
+        if (this.down) {
             const last = this.current;
             this.current = getPosition(event);
             if (this.dragging) {

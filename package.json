@@ -1,6 +1,6 @@
 {
   "name": "react-managed-draggable",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "Draggable wrapper for React",
   "main": "lib/es5/index.js",
   "module": "lib/es6/index.js",

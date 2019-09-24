@@ -151,8 +151,6 @@ export class ElementDraggable {
 
     private handleUp = (event: MouseEvent | TouchEvent) => {
         if (this.down || this.dragging) {
-            this.down = false;
-
             document.body.classList.remove('react-managed-draggable-unselectable');
             document.removeEventListener('mousemove', this.handleMove);
             document.removeEventListener('touchmove', this.handleMove);
@@ -176,6 +174,8 @@ export class ElementDraggable {
                     this.options.onClick(event, this.generateDragInformation(last));
                 }
             }
+
+            this.down = false;
         }
     }
 

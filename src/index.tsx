@@ -1,8 +1,11 @@
 import * as React from 'react';
 
-const styleElement = document.createElement('style');
-styleElement.innerHTML = '.react-managed-draggable-unselectable { user-select: none; }';
-document.body.appendChild(styleElement);
+if (!(window as any)['react-managed-draggable-style-injected']) {
+    (window as any)['react-managed-draggable-style-injected'] = true;
+    const styleElement = document.createElement('style');
+    styleElement.innerHTML = '.react-managed-draggable-unselectable { user-select: none; }';
+    document.body.appendChild(styleElement);
+}
 
 export interface XY {
     x: number;

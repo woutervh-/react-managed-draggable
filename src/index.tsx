@@ -127,7 +127,7 @@ export class ElementDraggable {
                 if (this.options.onDragStart) {
                     this.options.onDragStart(event, this.generateDragInformation(this.current));
                 }
-                event.stopPropagation();
+                // event.stopPropagation();
                 event.preventDefault();
             }
         }

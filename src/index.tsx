@@ -105,6 +105,9 @@ export class ElementDraggable {
             document.removeEventListener('mouseup', this.handleUp);
             document.removeEventListener('touchend', this.handleUp);
         }
+        if (this.down || this.dragging) {
+            document.body.classList.remove('react-managed-draggable-unselectable');
+        }
     }
 
     private getThreshold() {

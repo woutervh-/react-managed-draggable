@@ -66,7 +66,7 @@ export interface DragOptions {
 }
 
 export class ElementDraggable {
-    private element: HTMLElement;
+    private element: HTMLElement | SVGElement;
     private options: DragOptions;
     private immediate: boolean;
     private down: boolean = false;
@@ -74,7 +74,7 @@ export class ElementDraggable {
     private start: XY = { x: 0, y: 0 };
     private current: XY = { x: 0, y: 0 };
 
-    public constructor(element: HTMLElement, options: DragOptions, immediate?: boolean) {
+    public constructor(element: HTMLElement | SVGElement, options: DragOptions, immediate?: boolean) {
         this.element = element;
         this.options = options;
         this.immediate = !!immediate;
@@ -85,15 +85,15 @@ export class ElementDraggable {
             document.addEventListener('mouseup', this.handleUp);
             document.addEventListener('touchend', this.handleUp);
         } else {
-            element.addEventListener('mousedown', this.handleDown);
-            element.addEventListener('touchstart', this.handleDown);
+            (element as HTMLElement).addEventListener('mousedown', this.handleDown);
+            (element as HTMLElement).addEventListener('touchstart', this.handleDown);
         }
     }
 
     public destroy() {
         if (!this.immediate) {
-            this.element.removeEventListener('mousedown', this.handleDown);
-            this.element.removeEventListener('touchstart', this.handleDown);
+            (this.element as HTMLElement).removeEventListener('mousedown', this.handleDown);
+            (this.element as HTMLElement).removeEventListener('touchstart', this.handleDown);
         }
         if (this.down) {
             this.down = false;
